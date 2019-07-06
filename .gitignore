@@ -10,4 +10,5 @@
 .DS_Store
 /build
 /captures
+/Rokid_SDK_BluetoothSocket
 .externalNativeBuild

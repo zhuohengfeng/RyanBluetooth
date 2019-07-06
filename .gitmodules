@@ -1,0 +1,4 @@
+[submodule "Rokid_SDK_BluetoothSocket"]
+	path = Rokid_SDK_BluetoothSocket
+	url = git@gitlab.rokid-inc.com:glass/Rokid_SDK_BluetoothSocket.git
+	branch = master
