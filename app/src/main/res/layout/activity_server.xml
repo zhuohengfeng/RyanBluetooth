@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
-        android:id="@+id/text"
-        android:text="连接状态:"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="30dp" />
-
-    <EditText
-        android:id="@+id/edit"
-        android:layout_width="match_parent"
+        android:id="@+id/tx_waiting_tips"
+        android:layout_centerInParent="true"
+        android:text="等待手机端连接..."
+        android:textSize="40dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:text="发送文字"
-        android:onClick="sendText"
-        android:id="@+id/sendText"
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:visibility="gone"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="发送图片"
-        android:onClick="sendImage"
-        android:id="@+id/sendImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/text"
+            android:text="连接状态:"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
+        <Button
+            android:text="发送命令"
+            android:onClick="sendCmd"
+            android:id="@+id/sendCmd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:text="发送图片"
+            android:onClick="sendImage"
+            android:id="@+id/sendImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</RelativeLayout>

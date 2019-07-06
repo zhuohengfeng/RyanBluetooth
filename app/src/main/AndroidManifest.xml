@@ -23,10 +23,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".BTClientActivity"
+        <activity android:name=".client.BTClientActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".BTServerActivity"
+        <activity android:name=".server.BTServerActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".client.FaceIDActivity"
             android:screenOrientation="portrait"/>
 
     </application>

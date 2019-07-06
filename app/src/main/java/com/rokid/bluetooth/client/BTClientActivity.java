@@ -1,6 +1,5 @@
-package com.rokid.bluetooth;
+package com.rokid.bluetooth.client;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +21,8 @@ import android.widget.Toast;
 import com.jaiky.imagespickers.ImageConfig;
 import com.jaiky.imagespickers.ImageSelector;
 import com.jaiky.imagespickers.ImageSelectorActivity;
+import com.rokid.bluetooth.BaseBTClientActivity;
+import com.rokid.bluetooth.R;
 import com.rokid.bluetooth.message.GlassesMessage;
 import com.rokid.bluetooth.message.PoliceMobileMessage;
 import com.rokid.bluetooth.message.TransferMessage;
@@ -35,9 +35,8 @@ import java.util.List;
 
 public class BTClientActivity extends BaseBTClientActivity implements AdapterView.OnItemClickListener {
 
-    private EditText mEdit;
     private TextView mConnectionStatus;
-    private ListView mList;
+    private ListView mDevicesList;
     private List<BluetoothDevice> devices = new ArrayList<>();
     private BaseAdapter mBlueAdapter;
 
@@ -79,25 +78,23 @@ public class BTClientActivity extends BaseBTClientActivity implements AdapterVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
 
-        mEdit = (EditText) findViewById(R.id.edit);
-        mList = (ListView) findViewById(R.id.list);
-        mConnectionStatus = (TextView) findViewById(R.id.text);
+        mDevicesList = findViewById(R.id.list);
+        mConnectionStatus = findViewById(R.id.text);
         devices.addAll(BluetoothAdapter.getDefaultAdapter().getBondedDevices());
         mBlueAdapter = new MyAdapter();
-        mList.setAdapter(mBlueAdapter);
+        mDevicesList.setAdapter(mBlueAdapter);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, intentFilter);
-        mList.setOnItemClickListener(this);
+        registerReceiver(mFindReceiver, intentFilter);
+        mDevicesList.setOnItemClickListener(this);
     }
 
     public void find(View view) {
         BluetoothAdapter.getDefaultAdapter().startDiscovery();
     }
 
-
-    public void sendText(View view) {
+    public void sendCmd(View view) {
         GlassesMessage msg = new GlassesMessage();
         msg.type = GlassesMessage.TYPE_MOBILE_FACE;
         msg.mobileMessage = new PoliceMobileMessage();
@@ -109,7 +106,7 @@ public class BTClientActivity extends BaseBTClientActivity implements AdapterVie
     }
 
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mFindReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             devices.add((BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
@@ -120,8 +117,7 @@ public class BTClientActivity extends BaseBTClientActivity implements AdapterVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        closeBTConnect();
-        unregisterReceiver(mReceiver);
+        unregisterReceiver(mFindReceiver);
     }
 
     @Override
@@ -145,6 +141,15 @@ public class BTClientActivity extends BaseBTClientActivity implements AdapterVie
         sendMessage(msg);
     }
 
+    public void onFaceid(View view) {
+        if (!isActivied()) {
+            Toast.makeText(this, "请连接服务端", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(this, FaceIDActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     private class MyAdapter extends BaseAdapter {
 

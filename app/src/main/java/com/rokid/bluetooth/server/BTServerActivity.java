@@ -1,4 +1,4 @@
-package com.rokid.bluetooth;
+package com.rokid.bluetooth.server;
 
 
 import android.content.Intent;
@@ -6,13 +6,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jaiky.imagespickers.ImageConfig;
 import com.jaiky.imagespickers.ImageSelector;
 import com.jaiky.imagespickers.ImageSelectorActivity;
+import com.rokid.bluetooth.BaseBTServerActivity;
+import com.rokid.bluetooth.R;
 import com.rokid.bluetooth.message.GlassesMessage;
 import com.rokid.bluetooth.message.PoliceGlassesMessage;
 import com.rokid.bluetooth.message.TransferMessage;
@@ -24,8 +26,10 @@ import java.util.List;
 
 public class BTServerActivity extends BaseBTServerActivity {
 
-    private EditText mEdit;
-    private TextView mStatus;
+    private TextView mConnectionStatus;
+
+    private LinearLayout mContentLayout;
+    private TextView mWaitingTips;
 
     public void chooseImage(){
         ImageConfig imageConfig
@@ -41,7 +45,6 @@ public class BTServerActivity extends BaseBTServerActivity {
                 // 拍照后存放的图片路径（默认 /temp/picture） （会自动创建）
                 .filePath("/temp/picture")
                 .build();
-
 
         ImageSelector.open(this, imageConfig);   // 开启图片选择器
     }
@@ -65,13 +68,28 @@ public class BTServerActivity extends BaseBTServerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
-        mEdit = (EditText) findViewById(R.id.edit);
-        mStatus = (TextView) findViewById(R.id.text);
-        mStatus.setText("等待连接中...");
+        mConnectionStatus = findViewById(R.id.text);
+        mConnectionStatus.setText("等待连接中...");
+
+        mContentLayout = findViewById(R.id.ll_content);
+        mContentLayout.setVisibility(View.GONE);
+        mWaitingTips = findViewById(R.id.tx_waiting_tips);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isActivied()) { // 如果已经连上了
+            mContentLayout.setVisibility(View.VISIBLE);
+            mWaitingTips.setVisibility(View.GONE);
+        }
+        else {
+            mContentLayout.setVisibility(View.GONE);
+            mWaitingTips.setVisibility(View.VISIBLE);
+        }
+    }
 
-    public void sendText(View view) {
+    public void sendCmd(View view) {
         GlassesMessage msg = new GlassesMessage();
         msg.type = GlassesMessage.TYPE_GLASSES_FACE;
         msg.glassesMessage = new PoliceGlassesMessage();
@@ -81,7 +99,6 @@ public class BTServerActivity extends BaseBTServerActivity {
     public void sendImage(View view) {
         chooseImage();
     }
-
 
     public void onChooseImage(String path) {
         GlassesMessage msg = new GlassesMessage();
@@ -100,13 +117,19 @@ public class BTServerActivity extends BaseBTServerActivity {
     protected void onBluetoothStatusChange(BlueSocketStatus status) {
         Log.d("Rokid_BT", "[Client]onBluetoothStatusChange status="+status);
         if (status == BlueSocketStatus.CONNEDTIONED) {
-            mStatus.setText("有客户端已经连接上");
+            mConnectionStatus.setText("有客户端已经连接上");
+            mContentLayout.setVisibility(View.VISIBLE);
+            mWaitingTips.setVisibility(View.GONE);
         }
         else if (status == BlueSocketStatus.DISCONNECTION) {
-            mStatus.setText("客户端连接已经断开");
+            mConnectionStatus.setText("客户端连接已经断开");
+            mContentLayout.setVisibility(View.GONE);
+            mWaitingTips.setVisibility(View.VISIBLE);
         }
         else if (status == BlueSocketStatus.CONNECTION_FAILED) {
-            mStatus.setText("连接失败");
+            mConnectionStatus.setText("连接失败");
+            mContentLayout.setVisibility(View.GONE);
+            mWaitingTips.setVisibility(View.VISIBLE);
         }
         else if (status == BlueSocketStatus.SEND_MESSAGE_SUCCESS) {
             Toast.makeText(this, "发送成功", Toast.LENGTH_SHORT).show();

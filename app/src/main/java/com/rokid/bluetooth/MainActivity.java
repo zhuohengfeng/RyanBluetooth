@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.View;
 
+import com.rokid.bluetooth.client.BTClientActivity;
+import com.rokid.bluetooth.server.BTServerActivity;
 import com.rokid.bluetooth.utils.PermissionHelper;
 
 public class MainActivity extends Activity {
