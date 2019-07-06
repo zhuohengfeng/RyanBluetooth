@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:3.6.1'
     // 图片选择
     implementation 'com.jaikydota.imagespickers:imagespickers:1.0.6'
+    implementation project(path: ':Rokid_SDK_BluetoothSocket')
 }
