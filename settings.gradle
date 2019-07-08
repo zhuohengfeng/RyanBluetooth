@@ -1,1 +1,1 @@
-include ':app', ':Rokid_SDK_BluetoothSocket'
+include ':app_server',':app_client', ':Rokid_SDK_BluetoothSocket'
